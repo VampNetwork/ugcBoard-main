@@ -1,0 +1,13 @@
+{
+  "name": "ugc",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=16.x"
+  },
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "postinstall": "cd backend && npm install && cd ../frontend && npm install"
+  }
+}
