@@ -49,6 +49,11 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/files', fileRoutes);
 
+// Health check endpoint for Railway
+app.get('/api/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
