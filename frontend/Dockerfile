@@ -1,31 +1,26 @@
-# Build stage
-FROM node:16-alpine as build
+FROM node:16-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with legacy peer deps flag
+RUN npm install --legacy-peer-deps
 
-# Copy app source
+# Copy the rest of the application code
 COPY . .
 
-# Build the app
-RUN npm run build
+# Set NODE_OPTIONS to resolve the JSX runtime issue
+ENV NODE_OPTIONS=--openssl-legacy-provider
 
-# Production stage
-FROM nginx:alpine
+# Build with legacy peer deps flag
+RUN npm run build --legacy-peer-deps
 
-# Copy build from previous stage
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
+# Install serve to serve the static files
+RUN npm install -g serve
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Expose port 3000
+EXPOSE 3000
 
-# Expose port
-EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Serve the static files
+CMD ["serve", "-s", "build"]
