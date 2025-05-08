@@ -5,15 +5,17 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies with legacy peer deps flag
+# Install dependencies with legacy peer deps
 RUN npm install --legacy-peer-deps
 
 # Copy app source
 COPY . .
 
-# Try to bypass the JSX runtime issues with a different approach
-# Instead of NODE_OPTIONS, we'll use a different node version
-RUN npm run build --legacy-peer-deps || npm run build --legacy-peer-deps --force
+# Create .env file to bypass React's strict mode for JSX
+RUN echo "DISABLE_NEW_JSX_TRANSFORM=true" > .env
+
+# Build the app with legacy peer deps flag
+RUN npm run build --legacy-peer-deps
 
 # Production stage
 FROM nginx:alpine
