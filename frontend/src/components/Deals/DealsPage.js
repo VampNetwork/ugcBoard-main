@@ -567,6 +567,7 @@ const DealsPage = () => {
                     onChange={handleInputChange}
                     error={!!formErrors.clientName}
                     helperText={formErrors.clientName}
+		    autoComplete="off" list="" 
                   />
                 </Grid>
                 
