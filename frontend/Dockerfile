@@ -1,10 +1,21 @@
 # Build stage
 FROM node:16-alpine AS build
 WORKDIR /app
+
+# Copy package files first for better caching
 COPY package*.json ./
+# Install dependencies with specific flags to handle JSX runtime issues
 RUN npm install --legacy-peer-deps
+
+# Copy the rest of the application code
 COPY . .
-RUN npm run build
+
+# Fix the jsx-runtime issue before building
+RUN npm install react@latest react-dom@latest --legacy-peer-deps
+# Set NODE_ENV to production to avoid development-specific issues
+ENV NODE_ENV=production
+# Build the app with CI=false to prevent treating warnings as errors
+RUN CI=false npm run build
 
 # Production stage
 FROM nginx:alpine
