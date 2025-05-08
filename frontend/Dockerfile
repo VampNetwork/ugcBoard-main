@@ -1,7 +1,14 @@
-FROM nginx:alpine
+# Build stage
+FROM node:16-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+COPY . .
+RUN npm run build
 
-# Copy build files from local build directory
-COPY build/ /usr/share/nginx/html/
+# Production stage
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Create a custom nginx configuration for React SPAs
 RUN rm /etc/nginx/conf.d/default.conf
